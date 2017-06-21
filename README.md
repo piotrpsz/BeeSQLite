@@ -2,6 +2,7 @@
 With this project you can use SQLite library direct from your's Go code
 
 # Example: How to use
+```Go
 package main
 
 import (
@@ -132,3 +133,4 @@ func main() {
 		fmt.Printf("Record after read: %s\n", city.String())
 	}
 }
+```

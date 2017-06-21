@@ -1,3 +1,11 @@
+//
+// File: SQLiteManager.go
+// Project: SQLite for Go
+//
+// Created by Piotr Pszczółkowski on 21/06/2017
+// Copyright 2017 Piotr Pszczółkowski
+//
+
 package BeeSQLite
 
 import (

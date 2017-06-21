@@ -1,3 +1,11 @@
+//
+// File: SQLiteManager.go
+// Project: SQLite for Go
+//
+// Created by Piotr Pszczółkowski on 21/06/2017
+// Copyright 2017 Piotr Pszczółkowski
+//
+
 package BeeSQLite
 
 /*
@@ -119,7 +127,7 @@ func (s *Statement) selectQuery(query string) []Row {
 				case Blob:
 					field.SetValue(s.fetchBlob(i))
 				}
-				row.data[name] = field
+				row[name] = field
 			}
 			result = append(result, row)
 		}

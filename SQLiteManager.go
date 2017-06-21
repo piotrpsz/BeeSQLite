@@ -1,3 +1,11 @@
+//
+// File: SQLiteManager.go
+// Project: SQLite for Go
+//
+// Created by Piotr Pszczółkowski on 21/06/2017
+// Copyright 2017 Piotr Pszczółkowski
+//
+
 package BeeSQLite
 
 /*
@@ -16,6 +24,8 @@ import (
 )
 
 var header = [...]byte{0x53, 0x51, 0x4c, 0x69, 0x74, 0x65, 0x20, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x20, 0x33, 0x00}
+
+type Row map[string]Field
 
 type SQLite struct {
 	db        *C.sqlite3

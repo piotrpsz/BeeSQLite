@@ -1,6 +1,6 @@
 //
-// File: SQLiteManager.go
-// Project: SQLite for Go
+// File: Field.go
+// Project: BeeSQLite
 //
 // Created by Piotr Pszczółkowski on 21/06/2017
 // Copyright 2017 Piotr Pszczółkowski
@@ -17,6 +17,7 @@ import (
 
 type ValueType int
 
+// Types of value in field
 const (
 	Null ValueType = iota
 	Integer
@@ -25,12 +26,14 @@ const (
 	Blob
 )
 
+// Field - information about field
 type Field struct {
 	Name      string
 	valueType ValueType
 	data      []byte
 }
 
+// BindName - computed name used in binding
 func (f *Field) BindName() string {
 	return ":" + f.Name
 }
@@ -79,6 +82,7 @@ func convert(v interface{}) []byte {
 
 }
 
+// Int - return value as int
 func (f *Field) Int() int {
 	var value int64
 	buff := bytes.NewReader(f.data)
@@ -89,6 +93,7 @@ func (f *Field) Int() int {
 	return int(value)
 }
 
+// Float - returns value as float64
 func (f *Field) Float() float64 {
 	var value float64
 	buff := bytes.NewReader(f.data)
@@ -99,14 +104,17 @@ func (f *Field) Float() float64 {
 	return value
 }
 
+// String - return value as string
 func (f *Field) String() string {
 	return string(f.data)
 }
 
+// Blob - return value as array of bytes
 func (f *Field) Blob() []byte {
 	return f.data
 }
 
+// Bool - return value as bool
 func (f *Field) Bool() bool {
 	v := f.Int()
 	if v == 1 {

@@ -1,6 +1,6 @@
 //
-// File: SQLiteManager.go
-// Project: SQLite for Go
+// File: Statement.go
+// Project: BeeSQLite
 //
 // Created by Piotr Pszczółkowski on 21/06/2017
 // Copyright 2017 Piotr Pszczółkowski
@@ -57,6 +57,7 @@ const (
 	StatusDone = 101  // sqlite3_step() has finished executing
 )
 
+// Statement - wraper for oryginal sqlite3_stmt
 type Statement struct {
 	stmt *C.sqlite3_stmt
 }

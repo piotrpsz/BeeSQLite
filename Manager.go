@@ -1,6 +1,6 @@
 //
-// File: SQLiteManager.go
-// Project: SQLite for Go
+// File: Manager.go
+// Project: BeeSQLite
 //
 // Created by Piotr Pszczółkowski on 21/06/2017
 // Copyright 2017 Piotr Pszczółkowski

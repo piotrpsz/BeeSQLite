@@ -9,6 +9,7 @@ import (
 	"BeeSQLite"
 	"fmt"
 	"log"
+	"os"
 	"os/user"
 )
 
@@ -57,7 +58,7 @@ func (c *City) Save() bool {
 	return sqlm.Update("city", fields)
 }
 
-func (c *City) Init(data BeeSQLite.Row) {
+func (c *City) Init(data BeeSQLite.Row) *City {
 	id, ok := data["id"]
 	if ok {
 		c.ID = id.Int()
@@ -72,6 +73,7 @@ func (c *City) Init(data BeeSQLite.Row) {
 	if ok {
 		c.CountryName = countryName.String()
 	}
+	return c
 }
 
 func (c *City) String() string {
@@ -81,6 +83,7 @@ func (c *City) String() string {
 func main() {
 	usr, _ := user.Current()
 	fpath := usr.HomeDir + "/test.sqlite"
+	os.Remove(fpath)
 
 	ok := sqlm.Create(fpath)
 	if !ok {
@@ -124,13 +127,37 @@ func main() {
 
 	//-------------------------------------------------
 
+	var gdansk = City{Name: "Gdańsk", CountryName: "Poland"}
+	ok = gdansk.Save()
+	if !ok {
+		log.Fatal()
+	}
+	fmt.Printf("Record after insert: %s\n", gdansk.String())
+
+	//-------------------------------------------------
+
 	query := fmt.Sprintf("SELECT * FROM City WHERE id=%d", 1)
-	retv, ok := sqlm.Select(query)
+	result, ok := sqlm.Select(query)
 
 	if ok {
-		var city = City{}
-		city.Init(retv[0])
-		fmt.Printf("Record after read: %s\n", city.String())
+		if row := result.First(); row != nil {
+			city := (&City{}).Init(row)
+			fmt.Printf("Record after select: %s\n", city.String())
+		}
 	}
+
+	fmt.Println("------- SELECT ALL ----------------")
+
+	query = fmt.Sprintf("SELECT * FROM City")
+	result, ok = sqlm.Select(query)
+	if ok {
+		if result.IsNotEmpty() {
+			for index, row := range result {
+				city := (&City{}).Init(row)
+				fmt.Printf("Record %d: %s\n", index, city.String())
+			}
+		}
+	}
+
 }
 ```

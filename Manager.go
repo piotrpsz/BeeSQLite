@@ -25,8 +25,6 @@ import (
 
 var header = [...]byte{0x53, 0x51, 0x4c, 0x69, 0x74, 0x65, 0x20, 0x66, 0x6f, 0x72, 0x6d, 0x61, 0x74, 0x20, 0x33, 0x00}
 
-type Row map[string]Field
-
 type SQLite struct {
 	db        *C.sqlite3
 	statement Statement
@@ -139,18 +137,23 @@ func (s *SQLite) ExecQuery(query string) bool {
 	return false
 }
 
+// BeginTransaction - starts transaction
 func (s *SQLite) BeginTransaction() bool {
 	return s.ExecQuery("BEGIN IMMEDIATE TRANSACTION")
 }
 
+// CommitTransaction - accept changes & finish transaction
 func (s *SQLite) CommitTransaction() bool {
 	return s.ExecQuery("COMMIT TRANSACTION")
 }
 
+// RollbackTransaction - discard changes & finish transaction
 func (s *SQLite) RollbackTransaction() bool {
 	return s.ExecQuery("ROLLBACK TRANSACTION")
 }
 
+// EndTransaction - combination of
+// CommitTransaction & RollbackTransaction
 func (s *SQLite) EndTransaction(success bool) bool {
 	if success {
 		return s.CommitTransaction()
@@ -162,7 +165,12 @@ func (s *SQLite) lastInsertRowID() int {
 	return int(C.sqlite3_last_insert_rowid(s.db))
 }
 
-// Insert - inserts fields to table
+//
+// Insert - adds a new row to the table
+// ------------------------------------------------------------------
+// When all was finished without problem, function returns ID of
+// the added row.
+//
 func (s *SQLite) Insert(table string, fields []Field) (int, bool) {
 	if len(fields) == 0 {
 		return 0, false
@@ -189,7 +197,12 @@ func (s *SQLite) Insert(table string, fields []Field) (int, bool) {
 	return 0, false
 }
 
-// Update - updates record content
+//
+// Update - updates row content
+// ----------------------------------------------------------------
+// Important: the first field in fields array must be valid
+// id value of the row
+//
 func (s *SQLite) Update(table string, fields []Field) bool {
 	fmt.Println("SQLiteManager.Update")
 	if len(fields) == 0 {
@@ -216,8 +229,13 @@ func (s *SQLite) Update(table string, fields []Field) bool {
 	return false
 }
 
-// Select - selects query
-func (s *SQLite) Select(query string) ([]Row, bool) {
+//
+// Select - fetches data from table using SELECT
+// ------------------------------------------------------------------
+// Executes passed query, when was ok we receive
+// array of items of type 'Row'.
+//
+func (s *SQLite) Select(query string) (Result, bool) {
 	if s.prepare(query) == Ok {
 		result := s.statement.selectQuery(query)
 		if s.ErrorCode() == Ok {
@@ -251,6 +269,9 @@ func databaseExists(fpath string) bool {
 		// fmt.Println(err)
 		return false
 	}
+
+	// every valid sqlite database file starts with bytes
+	// presented in header array (see top of this file)
 
 	n := len(header)
 	data := make([]byte, n)

@@ -106,8 +106,8 @@ func (s *Statement) columnName(columnIndex int) string {
 	return C.GoString(C.sqlite3_column_name(s.stmt, C.int(columnIndex)))
 }
 
-func (s *Statement) selectQuery(query string) []Row {
-	var result []Row
+func (s *Statement) selectQuery(query string) Result {
+	var result Result
 	n := s.columnCount()
 	if n > 0 {
 		for s.step() == StatusRow {
